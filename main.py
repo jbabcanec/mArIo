@@ -2,14 +2,12 @@ import pygame
 import keyboard
 import time
 import numpy as np
-
+from ai_controller import ai_control
 from analyze import ScreenAnalyzer
 from recording_handler import RecordingHandler
 
 pygame.init()
 pygame.joystick.init()
-joystick = pygame.joystick.Joystick(0)
-joystick.init()
 
 bsnes_window_title = '[HLE] Super Mario Kart (USA)'
 
@@ -25,7 +23,14 @@ recording_handler = RecordingHandler(bsnes_window_title, analyze_screen)
 # Set up hotkey to toggle recording
 keyboard.on_press_key('space', lambda _: recording_handler.toggle_recording())
 
-# Keeping the script running
+# Simulation loop for AI control
 while True:
     pygame.event.get()  # Update the event queue continuously
+    
+    # Here, we create an action dictionary to represent continuously pressing the "I" key
+    action = {"w": False, "a": False, "s": False, "d": False, "u": False, "i": True, "o": False, "p": False, "9": False, "0": False}
+    
+    # Send the action dictionary to the ai_control function to control the game
+    ai_control(action)
+    
     time.sleep(0.1)

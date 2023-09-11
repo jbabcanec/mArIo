@@ -33,7 +33,7 @@ class RecordingHandler:
             screenshot = self.capture_screen()
             if screenshot is not None:
                 self.analyze_callback(screenshot)
-            time.sleep(0.1)
+            time.sleep(0.05)
 
     def stop_record(self):
         self.is_recording = False
