@@ -1,81 +1,22 @@
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
-Initial call, setting speed to 0 mph
+2023-09-12 01:26:29 - Speed: 0
+2023-09-12 01:26:29 - Speed: 0
+2023-09-12 01:26:30 - Speed: 0
+2023-09-12 01:26:30 - Speed: 0
+2023-09-12 01:26:30 - Speed: 0
+2023-09-12 01:26:30 - Speed: 0
+2023-09-12 01:26:31 - Speed: 0
+2023-09-12 01:26:31 - Speed: 0
+2023-09-12 01:26:31 - Speed: 0
+2023-09-12 01:26:32 - Speed: 0
+2023-09-12 01:26:32 - Speed: 0
+2023-09-12 01:26:32 - Speed: 0
+2023-09-12 01:26:33 - Speed: 0
+2023-09-12 01:26:33 - Speed: 0
+2023-09-12 01:27:02 - Speed: 0
+2023-09-12 01:27:02 - Speed: 0
+2023-09-12 01:27:03 - Speed: 0
+2023-09-12 01:27:03 - Speed: 0
+2023-09-12 01:27:03 - Speed: 0
+2023-09-12 01:27:04 - Speed: 0
+2023-09-12 01:27:04 - Speed: 0
+2023-09-12 01:27:04 - Speed: 0

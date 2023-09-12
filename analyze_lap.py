@@ -24,7 +24,7 @@ class LapAnalyzer:
 
         lap_sign = pytesseract.image_to_string(thresholded_roi, config=self.lap_sign_config).strip()
 
-        if re.search(r"(l.a?|la.)\s?|a?[pl]\s?\d?", lap_sign, re.IGNORECASE):
+        if re.search(r"lap", lap_sign, re.IGNORECASE):
             if self.lap_start_time is None:
                 self.lap_start_time = time.time()
             elapsed_time = time.time() - self.lap_start_time

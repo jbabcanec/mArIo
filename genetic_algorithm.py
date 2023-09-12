@@ -73,16 +73,25 @@ class GeneticAlgorithm:
         else:
             fitness_score -= 30
 
-        # Evaluate 'speed': higher is better, especially if on road and direction is good
+        # # Evaluate 'speed': higher is better, especially if on road and direction is good
+        # if data['speed'] > 0:
+        #     speed_bonus = data['speed']
+        #     if data['on_road_detection'] == 'On Road' and data['direction'] == 'GOOD':
+        #         speed_bonus *= 2  # Double the bonus if on road and going in the right direction
+        #     fitness_score += speed_bonus
+
+        # Evaluate 'speed': higher is better, with a quadratic bonus for higher speeds
         if data['speed'] > 0:
-            speed_bonus = data['speed']
-            if data['on_road_detection'] == 'On Road' and data['direction'] == 'GOOD':
-                speed_bonus *= 2  # Double the bonus if on road and going in the right direction
+            speed_bonus = data['speed'] ** 2 / 100  # Quadratic scaling of the speed bonus
             fitness_score += speed_bonus
+
+            if data['speed'] == 100 and data['on_road_detection'] == 'On Road':
+                speed_optimum_bonus = 200
+                fitness_score += speed_optimum_bonus
 
         # Evaluate 'on_road_detection': 'On Road' is good
         if data['on_road_detection'] == 'On Road':
-            fitness_score += 50
+            fitness_score += 80
 
         # Evaluate 'direction': 'GOOD' is good, 'WRONG WAY' is bad
         if data['direction'] == 'GOOD':
@@ -155,6 +164,8 @@ class GeneticAlgorithm:
             offspring1 = self.mutate(offspring1)
             offspring2 = self.mutate(offspring2)
 
+            #print('created new gen')
+
             # Add the offspring to the new population
             new_population.append(offspring1)
             new_population.append(offspring2)
@@ -176,7 +187,7 @@ class GeneticAlgorithm:
             print(f"Generation {generation}: Best Fitness = {best_fitness}")
 
             # Save the data at the end of each generation
-            self.save_data(filepath="C:\\Users\\josep\\Dropbox\\Babcanec Works\\Programming\\mArIo\\reinforcement\\learning\\ga_data.pkl")
+            self.save_data(filepath="learning\\ga_data.pkl")
             print('saved data')
             self.current_generation += 1
 

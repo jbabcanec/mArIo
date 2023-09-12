@@ -7,7 +7,7 @@ class PlaceAnalyzer:
         self.sample_saved = False
         self.previous_placements = [None] * 5
         self.last_valid_placement = self.read_last_valid_placement_from_file()
-        self.template_1 = cv2.imread('C:\\Users\\josep\\Dropbox\\Babcanec Works\\Programming\\mArIo\\reinforcement\\image_recognition_templates\\template_1.png', 0)
+        self.template_1 = cv2.imread('image_recognition_templates\\template_1.png', 0)
 
     def get_placement(self, screenshot):
         try:
@@ -58,7 +58,7 @@ class PlaceAnalyzer:
 
     def read_last_valid_placement_from_file(self):
         try:
-            with open('C:\\Users\\josep\\Dropbox\\Babcanec Works\\Programming\\mArIo\\reinforcement\\utils\\last_valid_placement.txt', 'r') as file:
+            with open('utils\\last_valid_placement.txt', 'r') as file:
                 last_valid_placement = file.read().strip()
                 if last_valid_placement.isdigit() and 1 <= int(last_valid_placement) <= 8:
                     return last_valid_placement
@@ -68,5 +68,5 @@ class PlaceAnalyzer:
             return '4'
 
     def write_last_valid_placement_to_file(self, placement):
-        with open('C:\\Users\\josep\\Dropbox\\Babcanec Works\\Programming\\mArIo\\reinforcement\\utils\\last_valid_placement.txt', 'w') as file:
+        with open('utils\\last_valid_placement.txt', 'w') as file:
             file.write(placement)

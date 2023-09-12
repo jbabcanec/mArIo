@@ -19,7 +19,7 @@ analyzer = ScreenAnalyzer()
 genetic_algorithm_instance = GeneticAlgorithm(population_size=20, mutation_rate=0.1)
 
 # Load any previously saved data
-genetic_algorithm_instance.load_data(filepath="C:\\Users\\josep\\Dropbox\\Babcanec Works\\Programming\\mArIo\\reinforcement\\learning\\ga_data.pkl")
+genetic_algorithm_instance.load_data(filepath="learning\\ga_data.pkl")
 
 # Run the genetic algorithm for a small number of generations to initiate the population
 #genetic_algorithm_instance.run(generations=10)
@@ -69,6 +69,11 @@ while True:
         
         # Perform the action using the action encoding
         perform_action(action)
+
+        # Update the speed based on the AI's action
+        # We do this because all other data is read from screenshot
+        # whereas the speed is read from button presses
+        analyzer.speed_analyzer.update_speed_based_on_action(action)
         
         # Increment the generation counter
         generation_counter += 1
@@ -78,5 +83,5 @@ while True:
             genetic_algorithm_instance.run(generations=1)
             generation_counter = 0
     
-    time.sleep(0.1)
+    time.sleep(0.05)
 
