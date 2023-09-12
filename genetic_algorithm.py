@@ -2,6 +2,7 @@ import random
 import numpy as np
 import keyboard
 import pickle
+from visualizer import Visualizer
 
 
 class GeneticAlgorithm:
@@ -11,6 +12,7 @@ class GeneticAlgorithm:
         self.population = self.initialize_population()
         self.current_analysis_data = {}
         self.current_generation = 0
+        self.visualizer = Visualizer()
     
     def initialize_population(self):
         """Initialize a population with random strategies."""
@@ -53,19 +55,23 @@ class GeneticAlgorithm:
 
     def fitness(self, individual):
         """Evaluate the fitness of an individual."""
-        
+
         # Get the current analysis data
         data = self.current_analysis_data
 
         # Start with a base fitness score
         fitness_score = 0
 
+        # Variables to track sustained good behavior
+        sustained_speed_bonus = 0
+        sustained_on_road_bonus = 0
+        sustained_good_direction_bonus = 0
+
         # Evaluate 'placement': lower is better, 4 is neutral
         if data['placement']:
             placement = int(data['placement'])
             if placement < 4:
                 fitness_score += (4 - placement) * 5
-            # No penalty or reward for placement 4 as it is neutral
 
         # Evaluate 'crash_detection': False is good, True is bad
         if not data['crash_detection']:
@@ -73,17 +79,17 @@ class GeneticAlgorithm:
         else:
             fitness_score -= 30
 
-        # # Evaluate 'speed': higher is better, especially if on road and direction is good
-        # if data['speed'] > 0:
-        #     speed_bonus = data['speed']
-        #     if data['on_road_detection'] == 'On Road' and data['direction'] == 'GOOD':
-        #         speed_bonus *= 2  # Double the bonus if on road and going in the right direction
-        #     fitness_score += speed_bonus
-
         # Evaluate 'speed': higher is better, with a quadratic bonus for higher speeds
         if data['speed'] > 0:
             speed_bonus = data['speed'] ** 2 / 100  # Quadratic scaling of the speed bonus
             fitness_score += speed_bonus
+
+            # Check sustained high speed and reward accordingly
+            if data['speed'] >= 80:  # You can adjust this threshold
+                sustained_speed_bonus += 100
+            else:
+                sustained_speed_bonus = 0
+            fitness_score += sustained_speed_bonus
 
             if data['speed'] == 100 and data['on_road_detection'] == 'On Road':
                 speed_optimum_bonus = 200
@@ -93,11 +99,22 @@ class GeneticAlgorithm:
         if data['on_road_detection'] == 'On Road':
             fitness_score += 80
 
+            # Check sustained on-road behavior and reward accordingly
+            sustained_on_road_bonus += 100
+        else:
+            sustained_on_road_bonus = 0
+        fitness_score += sustained_on_road_bonus
+
         # Evaluate 'direction': 'GOOD' is good, 'WRONG WAY' is bad
         if data['direction'] == 'GOOD':
             fitness_score += 30
+
+            # Check sustained good direction and reward accordingly
+            sustained_good_direction_bonus += 10
         else:  # Assuming the other value it can take is 'WRONG WAY'
             fitness_score -= 80
+            sustained_good_direction_bonus = 0
+        fitness_score += sustained_good_direction_bonus
 
         # Evaluate 'lap': incrementing is good, not incrementing for a long time is bad
         # Here we reward increase in lap number, but we will later introduce a mechanism
@@ -111,37 +128,42 @@ class GeneticAlgorithm:
         """Mutate an individual with a certain probability."""
         for i in range(len(individual)):
             if random.random() < self.mutation_rate:
-                # Change the gene to a random binary value (0 or 1)
-                individual[i] = 1 - individual[i]  # This flips the bit, 0 becomes 1 and 1 becomes 0
+                # Flip the bit with a 50% chance
+                if random.random() < 0.5:
+                    individual[i] = 1 - individual[i]
+                # Swap the current gene with another random gene in the individual with a 50% chance
+                else:
+                    swap_with = random.randint(0, len(individual) - 1)
+                    individual[i], individual[swap_with] = individual[swap_with], individual[i]
         return individual
 
     def crossover(self, parent1, parent2):
-        """Perform crossover between two parents to produce offspring."""
-        # Choose a random crossover point
-        crossover_point = random.randint(0, len(parent1) - 1)
+        """Perform two-point crossover between two parents to produce offspring."""
         
-        # Create two offspring by combining the genes of the parents
-        offspring1 = np.concatenate((parent1[:crossover_point], parent2[crossover_point:]))
-        offspring2 = np.concatenate((parent2[:crossover_point], parent1[crossover_point:]))
+        # Choose two random crossover points
+        crossover_point1, crossover_point2 = sorted(random.sample(range(len(parent1)), 2))
+        
+        # Create offspring by combining genes of parents between the crossover points
+        offspring1 = np.concatenate((parent1[:crossover_point1], parent2[crossover_point1:crossover_point2], parent1[crossover_point2:]))
+        offspring2 = np.concatenate((parent2[:crossover_point1], parent1[crossover_point1:crossover_point2], parent2[crossover_point2:]))
         
         return offspring1, offspring2
 
-    def select(self, k=3):
-        """Select individuals to act as parents for the next generation using tournament selection.
-
-        Parameters:
-        k (int): The number of individuals to select for each tournament.
-        """
+    def select(self, k=6, elitism=0.1):
+        """Select individuals using tournament selection with elitism."""
+        
         selected_parents = []
 
-        for _ in range(self.population_size):
-            # Select k individuals randomly from the population for the tournament
+        # Elitism: directly pass the top individuals to the next generation
+        num_elites = int(elitism * self.population_size)
+        fitness_values = [(ind, self.fitness(ind)) for ind in self.population]
+        elites = [ind for ind, _ in sorted(fitness_values, key=lambda x: x[1], reverse=True)[:num_elites]]
+        selected_parents.extend(elites)
+        
+        for _ in range(self.population_size - num_elites):
+            # Tournament selection for the remaining individuals
             tournament_individuals = random.sample(self.population, k)
-            
-            # Evaluate the fitness of the selected individuals
             fitness_values = [self.fitness(ind) for ind in tournament_individuals]
-            
-            # Select the individual with the highest fitness
             selected_parents.append(tournament_individuals[np.argmax(fitness_values)])
         
         return selected_parents
@@ -186,10 +208,16 @@ class GeneticAlgorithm:
             best_fitness = max(fitness_values)
             print(f"Generation {generation}: Best Fitness = {best_fitness}")
 
+            # Update the plot data
+            self.visualizer.update_data(generation, best_fitness)
+
             # Save the data at the end of each generation
             self.save_data(filepath="learning\\ga_data.pkl")
             print('saved data')
             self.current_generation += 1
+
+        # Display the final plot
+        self.visualizer.show_plot()
 
     def get_action(self):
         """Get the action to be performed by the AI."""
