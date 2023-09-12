@@ -19,8 +19,8 @@ class LapAnalyzer:
         gray_roi = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
         _, thresholded_roi = cv2.threshold(gray_roi, 100, 255, cv2.THRESH_BINARY)
         
-        cv2.imshow('ROI', roi)
-        cv2.imshow('Processed ROI', thresholded_roi)
+        #cv2.imshow('ROI', roi)
+        #cv2.imshow('Processed ROI', thresholded_roi)
 
         lap_sign = pytesseract.image_to_string(thresholded_roi, config=self.lap_sign_config).strip()
 
