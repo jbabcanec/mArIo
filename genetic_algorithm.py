@@ -3,7 +3,8 @@ import numpy as np
 import keyboard
 import pickle
 from visualizer import Visualizer
-
+from history import HistoryHandler
+from road_mapping import RoadMapping
 
 class GeneticAlgorithm:
     def __init__(self, population_size, mutation_rate):
@@ -13,6 +14,10 @@ class GeneticAlgorithm:
         self.current_analysis_data = {}
         self.current_generation = 0
         self.visualizer = Visualizer()
+
+        self.history_handler = HistoryHandler(filepath="learning\\history_data.pkl")
+        self.historical_strategies = self.history_handler.load()
+        self.road_mapping = RoadMapping(filepath="learning\\road_map.pkl")
     
     def initialize_population(self):
         """Initialize a population with random strategies."""
@@ -24,7 +29,8 @@ class GeneticAlgorithm:
 
     def create_random_individual(self):
         """Create a random individual."""
-        return np.random.randint(0, 2, 10)
+        #return np.random.randint(0, 2, 10)
+        return np.random.randint(0, 2, 6) # Excluding L/R X/Y for now
 
     def save_data(self, filepath):
         data = {
@@ -52,6 +58,13 @@ class GeneticAlgorithm:
         analysis_data (dict): A dictionary containing the latest analysis data.
         """
         self.current_analysis_data = analysis_data
+
+        # Update the road map based on the on-road detection signal
+        on_road_detection = analysis_data.get('on_road_detection', 'Off Road')
+        position = analysis_data.get('position', None)  # Assuming 'position' is a key in your analysis_data
+        if position:
+            self.road_mapping.update_road_map(position, on_road_detection)
+
 
     def fitness(self, individual):
         """Evaluate the fitness of an individual."""
@@ -95,6 +108,8 @@ class GeneticAlgorithm:
             if speed == 100 and data.get('on_road_detection') == 'On Road':
                 speed_optimum_bonus = 200
                 fitness_score += speed_optimum_bonus
+        else:
+            fitness_score -= 100
 
         # Evaluate 'on_road_detection': 'On Road' is good
         on_road_detection = data.get('on_road_detection', 'Off Road')
@@ -104,7 +119,7 @@ class GeneticAlgorithm:
             # Check sustained on-road behavior and reward accordingly
             sustained_on_road_bonus += 100
         else:
-            sustained_on_road_bonus = 0
+            fitness_score -= 80
         fitness_score += sustained_on_road_bonus
 
         # Evaluate 'direction': 'GOOD' is good, 'WRONG WAY' is bad
@@ -115,7 +130,7 @@ class GeneticAlgorithm:
             # Check sustained good direction and reward accordingly
             sustained_good_direction_bonus += 100
         else:
-            fitness_score -= 80
+            fitness_score -= 150
             sustained_good_direction_bonus = 0
         fitness_score += sustained_good_direction_bonus
 
@@ -217,7 +232,15 @@ class GeneticAlgorithm:
             # Save the data at the end of each generation
             self.save_data(filepath="learning\\ga_data.pkl")
             print('saved data')
+
+            # Save the best strategy of the current generation to the historical data
+            best_strategy = max(self.population, key=self.fitness)
+            self.history_handler.save(best_strategy)
+            
             self.current_generation += 1
+
+        # Save the road map at the end of the run
+        self.road_mapping.save_road_map()
 
         # Display the final plot
         self.visualizer.show_plot()
@@ -226,7 +249,7 @@ class GeneticAlgorithm:
         """Get the action to be performed by the AI."""
         
         # Occasionally choose a random individual with a 10% probability
-        if random.random() < 0.10:
+        if random.random() < 0.05:
             random_individual = random.choice(self.population)
             print("Action chosen (random): ", random_individual)
             return random_individual
@@ -235,8 +258,8 @@ class GeneticAlgorithm:
         fitness_values = [(ind, self.fitness(ind)) for ind in self.population]
         sorted_population = sorted(fitness_values, key=lambda x: x[1], reverse=True)
 
-        # Select one of the top 3 most fit individuals
-        top_individuals = sorted_population[:3]
+        # Select one of the top 2 most fit individuals
+        top_individuals = sorted_population[:2]
         chosen_individual = random.choice(top_individuals)[0]
         print("Action chosen: ", chosen_individual)
         

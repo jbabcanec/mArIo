@@ -1,6 +1,7 @@
 import keyboard
 
-KEY_MAPPING = ['w', 'a', 's', 'd', 'u', 'i', 'o', 'p', '9', '0']
+#KEY_MAPPING = ['w', 'a', 's', 'd', 'u', 'i', 'o', 'p', '9', '0']
+KEY_MAPPING = ['w', 'a', 's', 'd', 'u', 'i']
 
 def perform_action(action):
     """Perform the action represented by the action encoding."""
