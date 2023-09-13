@@ -57,7 +57,7 @@ def toggle_ai_control():
 # Set up a hotkey to toggle recording and AI control
 keyboard.on_press_key('space', lambda _: toggle_ai_control())
 
-generation_interval = 500  # Adjust this value as needed
+generation_interval = 200  # Adjust this value as needed
 generation_counter = 0
 
 while True:

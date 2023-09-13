@@ -10,3 +10,4 @@ def perform_action(action):
             keyboard.press(key_name)
         else:
             keyboard.release(key_name)
+

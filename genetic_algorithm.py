@@ -68,35 +68,37 @@ class GeneticAlgorithm:
         sustained_good_direction_bonus = 0
 
         # Evaluate 'placement': lower is better, 4 is neutral
-        if data['placement']:
-            placement = int(data['placement'])
-            if placement < 4:
-                fitness_score += (4 - placement) * 5
+        placement = int(data.get('placement', 4))
+        if placement < 4:
+            fitness_score += (4 - placement) * 5
 
         # Evaluate 'crash_detection': False is good, True is bad
-        if not data['crash_detection']:
+        crash_detection = data.get('crash_detection', False)
+        if not crash_detection:
             fitness_score += 20
         else:
             fitness_score -= 30
 
         # Evaluate 'speed': higher is better, with a quadratic bonus for higher speeds
-        if data['speed'] > 0:
-            speed_bonus = data['speed'] ** 2 / 100  # Quadratic scaling of the speed bonus
+        speed = data.get('speed', 0)
+        if speed > 0:
+            speed_bonus = speed ** 2 / 100  # Quadratic scaling of the speed bonus
             fitness_score += speed_bonus
 
             # Check sustained high speed and reward accordingly
-            if data['speed'] >= 80:  # You can adjust this threshold
+            if speed >= 80:  # You can adjust this threshold
                 sustained_speed_bonus += 100
             else:
                 sustained_speed_bonus = 0
             fitness_score += sustained_speed_bonus
 
-            if data['speed'] == 100 and data['on_road_detection'] == 'On Road':
+            if speed == 100 and data.get('on_road_detection') == 'On Road':
                 speed_optimum_bonus = 200
                 fitness_score += speed_optimum_bonus
 
         # Evaluate 'on_road_detection': 'On Road' is good
-        if data['on_road_detection'] == 'On Road':
+        on_road_detection = data.get('on_road_detection', 'Off Road')
+        if on_road_detection == 'On Road':
             fitness_score += 80
 
             # Check sustained on-road behavior and reward accordingly
@@ -106,23 +108,24 @@ class GeneticAlgorithm:
         fitness_score += sustained_on_road_bonus
 
         # Evaluate 'direction': 'GOOD' is good, 'WRONG WAY' is bad
-        if data['direction'] == 'GOOD':
+        direction = data.get('direction', 'WRONG WAY')
+        if direction == 'GOOD':
             fitness_score += 30
 
             # Check sustained good direction and reward accordingly
-            sustained_good_direction_bonus += 10
-        else:  # Assuming the other value it can take is 'WRONG WAY'
+            sustained_good_direction_bonus += 100
+        else:
             fitness_score -= 80
             sustained_good_direction_bonus = 0
         fitness_score += sustained_good_direction_bonus
 
         # Evaluate 'lap': incrementing is good, not incrementing for a long time is bad
-        # Here we reward increase in lap number, but we will later introduce a mechanism
-        # to penalize if no increment over a longer period
-        if data['lap'] > 1:
-            fitness_score += data['lap'] * 15
+        lap = data.get('lap', 1)
+        if lap > 1:
+            fitness_score += lap * 15
 
         return fitness_score
+
 
     def mutate(self, individual):
         """Mutate an individual with a certain probability."""
@@ -221,7 +224,21 @@ class GeneticAlgorithm:
 
     def get_action(self):
         """Get the action to be performed by the AI."""
-        # For now, return a random action from the population
-        action = random.choice(self.population)
-        print("Action chosen: ", action)
-        return action
+        
+        # Occasionally choose a random individual with a 10% probability
+        if random.random() < 0.10:
+            random_individual = random.choice(self.population)
+            print("Action chosen (random): ", random_individual)
+            return random_individual
+
+        # Find the most fit individuals in the population
+        fitness_values = [(ind, self.fitness(ind)) for ind in self.population]
+        sorted_population = sorted(fitness_values, key=lambda x: x[1], reverse=True)
+
+        # Select one of the top 3 most fit individuals
+        top_individuals = sorted_population[:3]
+        chosen_individual = random.choice(top_individuals)[0]
+        print("Action chosen: ", chosen_individual)
+        
+        return chosen_individual
+
